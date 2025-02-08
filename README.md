@@ -2,6 +2,11 @@
 
 This buildpack allows you to include environment variables in your Heroku/Dokku deployments using a simple environment file. It automatically detects and loads environment variables from specified files during the build process.
 
+## Why?
+
+I like keeping project deployment configurations within the codebase. While `.buildpacks` files are helpful, some buildpacks require environment variables (like `NGINX_ROOT` for [heroku-buildpack-nginx](https://github.com/jackcannon/heroku-buildpack-nginx)), forcing server-side configuration. This adds complexity and prevents configuration updates through simple code changes.
+This "pre-buildpack" approach aims to maximize codebase-based deployment configuration. Deploying to a new server becomes streamlined: create the app and push the code.
+
 ## Supported Files
 
 The buildpack looks for the following files in your repository (in order):
@@ -33,6 +38,9 @@ https://github.com/jackcannon/heroku-buildpack-nginx
 ```
 
 ### Command
+
+Not recommended, but here if you must.
+
 #### For dokku
 ```
 dokku buildpacks:add --index 1 https://github.com/jackcannon/heroku-buildpack-env
