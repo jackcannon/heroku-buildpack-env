@@ -78,6 +78,10 @@ https://github.com/jackcannon/heroku-buildpack-nginx
 (can be empty. Required by heroku-buildpack-nginx)
 ```
 
+### Example repo
+
+An example of a full implementation can be found here: https://github.com/jackcannon/env-buildpack-example
+
 ## Security Notice
 
 ⚠️ **Important**: This buildpack is intended for non-sensitive configuration variables. Do not store sensitive information (passwords, API keys, etc.) in these files as they will be committed to your repository. For sensitive data, use your platform's secure environment variable interface:
