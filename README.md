@@ -85,6 +85,35 @@ https://github.com/jackcannon/heroku-buildpack-nginx
 - Dokku: `dokku config:set your-app KEY=VALUE`
 - Heroku: `heroku config:set KEY=VALUE`
 
+## Environment Variable Load Order
+
+There are two ways to set environment variables, and they load at different times:
+
+1. **Build Time Variables** (via `.dokku.env` file)
+   - These load during the build process
+   - Used when your app is being built
+   - Persist if not overwritten
+
+2. **Runtime Variables** (via `config:set`)
+   - These load just before your app starts
+   - Override any matching variables from `.dokku.env`
+
+So if you set the same variable both ways:
+```bash
+# In .dokku.env
+MY_VAR='build-time-value'
+
+# Via command line
+dokku config:set your-app MY_VAR='runtime-value'
+```
+
+Your app will see:
+- `MY_VAR='build-time-value'` during build
+- `MY_VAR='runtime-value'` when running
+
+> **Tip:** Unless you really need values to be different between build and runtime, just use `.dokku.env` files.
+
+
 ## How It Works
 
 The buildpack:
