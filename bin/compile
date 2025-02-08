@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir> <env-dir>
+# $HOME: /app
+
+# -e - always exit on error
+# -o pipefail - don't ignore exit codes when piping output
+set -eo pipefail
+
+BUILD_DIR=${1:-.}
+CACHE_DIR=${2:-}
+ENV_DIR=${3:-}
+BP_DIR=$(cd "$(dirname "${0:-}")"; cd ..; pwd)
+
+echo "-----> Looking for environment files"
+
+# Function to process env file
+process_env_file() {
+    local file=$1
+    echo "-----> Found $file, loading environment variables"
+    # Create a directory for our environment variables
+    mkdir -p $ENV_DIR
+
+    # Read the file line by line
+    while IFS= read -r line; do
+        # Skip comments and empty lines
+        if [[ $line =~ ^[[:space:]]*# ]] || [[ -z $line ]]; then
+            continue
+        fi
+
+        # Extract variable name and value
+        if [[ $line =~ ^([^=]+)=(.*)$ ]]; then
+            local name="${BASH_REMATCH[1]}"
+            local value="${BASH_REMATCH[2]}"
+
+            # Remove surrounding quotes if they exist
+            value="${value#\'}"
+            value="${value%\'}"
+            value="${value#\"}"
+            value="${value%\"}"
+
+            # Write to a file in ENV_DIR
+            echo -n "$value" > "$ENV_DIR/$name"
+            echo "       Setting $name"
+        fi
+    done < "$BUILD_DIR/$file"
+}
+
+# Check for each possible file
+for env_file in ".dokku.env" ".env.dokku" ".heroku.env" ".env.heroku"; do
+    if [ -f "$BUILD_DIR/$env_file" ]; then
+        process_env_file "$env_file"
+        break  # Only process the first file found
+    fi
+done
+
+echo "-----> Environment loading complete"
