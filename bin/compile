@@ -40,7 +40,7 @@ process_env_file() {
 
             # Write to a file in ENV_DIR
             echo -n "$value" > "$ENV_DIR/$name"
-            echo "       Setting $name to $value"
+            echo "       \033[90mSetting\033[0m $name \033[90mto\033[0m $value"
         fi
     done < "$BUILD_DIR/$file"
 }
